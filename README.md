@@ -43,38 +43,56 @@ It detects whether your pricing model is:
 
 ## Install
 
-Cairo is a single-file Claude skill. Pick the scope you want.
+### Option A — Plugin (recommended)
 
-### Project-scoped (recommended)
+Once Cairo is listed in the Anthropic plugin marketplace, install with:
 
-```bash
-mkdir -p .claude/skills/pricing-diagnose
-curl -L https://raw.githubusercontent.com/getklaim/cairo/main/SKILL.md \
-  -o .claude/skills/pricing-diagnose/SKILL.md
+```
+/plugin install cairo
 ```
 
-### User-scoped (available across all your projects)
-
-```bash
-mkdir -p ~/.claude/skills/pricing-diagnose
-curl -L https://raw.githubusercontent.com/getklaim/cairo/main/SKILL.md \
-  -o ~/.claude/skills/pricing-diagnose/SKILL.md
-```
-
-### Or clone
+To try the plugin from this repo before it's listed:
 
 ```bash
 git clone https://github.com/getklaim/cairo.git
-cp cairo/SKILL.md ~/.claude/skills/pricing-diagnose/SKILL.md
+claude --plugin-dir ./cairo
 ```
 
-Reload Claude Code after installing.
+**Invocation when installed as a plugin:**
+
+```
+/cairo:pricing-diagnose
+```
+
+### Option B — Manual single-file install
+
+Cairo's skill works standalone — just drop the `SKILL.md` into a Claude skills directory.
+
+```bash
+# Project-scoped
+mkdir -p .claude/skills/pricing-diagnose
+curl -L https://raw.githubusercontent.com/getklaim/cairo/main/skills/pricing-diagnose/SKILL.md \
+  -o .claude/skills/pricing-diagnose/SKILL.md
+
+# Or user-scoped (all projects)
+mkdir -p ~/.claude/skills/pricing-diagnose
+curl -L https://raw.githubusercontent.com/getklaim/cairo/main/skills/pricing-diagnose/SKILL.md \
+  -o ~/.claude/skills/pricing-diagnose/SKILL.md
+```
+
+**Invocation when installed manually:**
+
+```
+/pricing-diagnose
+```
+
+Reload Claude Code after installing either way.
 
 ---
 
 ## Use
 
-From the root of any project:
+From the root of any project. Replace `/pricing-diagnose` with `/cairo:pricing-diagnose` if you installed via the plugin path.
 
 ```bash
 # Full diagnosis (auto-detects pricing model)
@@ -99,7 +117,7 @@ You'll get a Reality Check Report with:
 - Top 3 priority findings with pseudo-code fixes
 - Estimated effort per finding
 
-See [SKILL.md](./SKILL.md) for the full spec.
+See [skills/pricing-diagnose/SKILL.md](./skills/pricing-diagnose/SKILL.md) for the full spec.
 
 ---
 

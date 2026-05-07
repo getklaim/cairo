@@ -1,0 +1,23 @@
+{
+  "name": "cairo",
+  "version": "1.0.0",
+  "description": "Self-diagnose your AI product's pricing system. Detects pricing model (tiered, usage-based, hybrid) and scores 6 maturity signals plus 6 usage-based deep checks (credit carryover, decoy pricing, one-time purchase, cancellation flow, credit meter, usage email) with file-path-precise findings.",
+  "author": {
+    "name": "Klaim",
+    "email": "hello@getklaim.com",
+    "url": "https://getklaim.com"
+  },
+  "homepage": "https://github.com/getklaim/cairo",
+  "repository": "https://github.com/getklaim/cairo",
+  "license": "MIT",
+  "keywords": [
+    "pricing",
+    "ai-pricing",
+    "usage-based-billing",
+    "stripe",
+    "credits",
+    "diagnostic",
+    "self-assessment",
+    "billing"
+  ]
+}
