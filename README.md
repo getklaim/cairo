@@ -124,8 +124,10 @@ See [skills/pricing-diagnose/SKILL.md](./skills/pricing-diagnose/SKILL.md) for t
 ## Privacy & security
 
 - **Runs entirely on your machine.** Cairo analyzes files locally — no code, no findings, no scores leave your environment.
-- **No telemetry by default.** Anonymous score aggregation is opt-in only and never includes code contents.
+- **No telemetry.** Cairo contains no analytics SDKs and makes no outbound network calls.
 - **Read-only.** Cairo never modifies your code. It produces a report.
+
+Full details: [PRIVACY.md](./PRIVACY.md)
 
 ---
 
