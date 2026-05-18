@@ -49,7 +49,7 @@ This repo doubles as its own Claude Code plugin marketplace. Add it once, then i
 
 ```
 /plugin marketplace add getklaim/cairo
-/plugin install cairo@cairo
+/plugin install cairo@klaim
 ```
 
 To run the plugin from a local checkout (e.g. for development):
