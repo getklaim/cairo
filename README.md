@@ -45,13 +45,14 @@ It detects whether your pricing model is:
 
 ### Option A — Plugin (recommended)
 
-Once Cairo is listed in the Anthropic plugin marketplace, install with:
+This repo doubles as its own Claude Code plugin marketplace. Add it once, then install:
 
 ```
-/plugin install cairo
+/plugin marketplace add getklaim/cairo
+/plugin install cairo@cairo
 ```
 
-To try the plugin from this repo before it's listed:
+To run the plugin from a local checkout (e.g. for development):
 
 ```bash
 git clone https://github.com/getklaim/cairo.git
