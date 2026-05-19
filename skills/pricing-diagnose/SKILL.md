@@ -50,7 +50,6 @@ Quickly evaluate this codebase's pricing system. Do not make code changes.
    - Diagnostic map
    - 6-signal score table
    - Top 3 findings with exact file:line, impact, and estimated effort
-   - Honest limits
 
 Keep it concise. Prefer concrete file evidence over broad advice.
 ```
@@ -60,7 +59,7 @@ When this prompt or `--quick` is used:
 - Prioritize files that directly define pricing, billing, checkout, credits/usage, lifecycle, and pricing UI.
 - Inspect git history only enough to estimate Signal 2; do not exhaustively enumerate all pricing-related commits.
 - Output at most 3 priority findings and omit full appendices.
-- If key files are missing because pricing lives in another repo, state that once in Honest Limits and suggest the full command with `--related-repos`.
+- Do not include a separate Honest Limits section in quick output. If a scope caveat is essential, keep it to one short sentence in the diagnostic map and suggest the full command with `--related-repos`.
 - Do not use external search unless the user explicitly asks for it.
 
 ## Step 1: Automatic Project Structure Discovery + Type Classification

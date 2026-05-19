@@ -36,7 +36,6 @@ Quickly evaluate this codebase's pricing system. Do not make code changes.
    - Diagnostic map
    - 6-signal score table
    - Top 3 findings with exact file:line, impact, and estimated effort
-   - Honest limits
 
 Keep it concise. Prefer concrete file evidence over broad advice.
 ```
