@@ -2,7 +2,46 @@
 
 > A Claude skill that self-diagnoses the pricing system of your AI product.
 >
-> Run `/pricing-diagnose` inside your project. Get a Reality Check Report with file paths, line numbers, and pseudo-code fixes.
+> Run `/pricing-diagnose` inside your project. Get a Reality Check Report with file paths, line numbers, estimated impact, and fix effort.
+
+---
+
+## Quick prompt-only check
+
+Want to try Cairo before installing the skill? Open Claude Code at your project root and paste this:
+
+```text
+Act as Cairo, a pricing-system diagnostic reviewer for AI products.
+
+Quickly evaluate this codebase's pricing system. Do not make code changes.
+
+1. Detect whether the pricing model is tiered, usage-based, hybrid, or unknown.
+2. Inspect only the highest-signal pricing files first: pricing page/components, plan config, billing/checkout code, Stripe/Paddle integration, credit or usage ledger, lifecycle/cancel flow, and relevant git history.
+3. Score these 6 signals briefly:
+   - Page-code consistency
+   - Experimentation velocity
+   - Hidden SKUs + experimentation infrastructure
+   - Billing stack maturity
+   - Unit clarity
+   - Lifecycle coverage
+4. If the model is usage-based or hybrid, also check:
+   - Credit carryover
+   - Decoy pricing
+   - One-time credit purchase
+   - Cancellation save offer
+   - Credit meter
+   - Credit usage email
+5. Output a compact Reality Check:
+   - Pricing model + confidence
+   - Diagnostic map
+   - 6-signal score table
+   - Top 3 findings with exact file:line, impact, and estimated effort
+   - Honest limits
+
+Keep it concise. Prefer concrete file evidence over broad advice.
+```
+
+For the full repeatable workflow, install the plugin or skill below and run `/pricing-diagnose`.
 
 ---
 
@@ -99,6 +138,9 @@ From the root of any project. Replace `/pricing-diagnose` with `/cairo:pricing-d
 # Full diagnosis (auto-detects pricing model)
 /pricing-diagnose
 
+# Fast first-pass diagnosis
+/pricing-diagnose --quick
+
 # Focus a single signal
 /pricing-diagnose --signal 5
 
@@ -115,7 +157,7 @@ From the root of any project. Replace `/pricing-diagnose` with `/cairo:pricing-d
 You'll get a Reality Check Report with:
 - Pricing model + diagnostic map
 - Score per signal (with the file path that drove the score)
-- Top 3 priority findings with pseudo-code fixes
+- Top 3 priority findings with exact file locations and impact estimates
 - Estimated effort per finding
 
 See [skills/pricing-diagnose/SKILL.md](./skills/pricing-diagnose/SKILL.md) for the full spec.

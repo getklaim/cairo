@@ -9,6 +9,7 @@ description: A skill for self-diagnosing the pricing system of an AI product. De
 
 From the project root:
 - `/pricing-diagnose` — full automatic exploration (auto-detects pricing model)
+- `/pricing-diagnose --quick` — compact first-pass evaluation for users who want fast feedback before a full report
 - `/pricing-diagnose --signal N` — analyze only a specific signal (1-6)
 - `/pricing-diagnose --pricing-model <tiered|usage-based|hybrid>` — force a specific pricing model when auto-detection is wrong
 - `/pricing-diagnose --usage-deep` — run all 6 usage-based deep checks (credit carryover, decoy, one-time purchase, cancellation flow, meter, email) regardless of model
@@ -18,6 +19,49 @@ From the project root:
 - `/pricing-diagnose --external` — supplementary external review/feedback search
 
 No URL input. The current project is the analysis target.
+
+## Prompt-Only Quick Evaluation
+
+Some users will not install the skill first. They may paste the following prompt directly into Claude Code from their project root to get a lightweight evaluation:
+
+```text
+Act as Cairo, a pricing-system diagnostic reviewer for AI products.
+
+Quickly evaluate this codebase's pricing system. Do not make code changes.
+
+1. Detect whether the pricing model is tiered, usage-based, hybrid, or unknown.
+2. Inspect only the highest-signal pricing files first: pricing page/components, plan config, billing/checkout code, Stripe/Paddle integration, credit or usage ledger, lifecycle/cancel flow, and relevant git history.
+3. Score these 6 signals briefly:
+   - Page-code consistency
+   - Experimentation velocity
+   - Hidden SKUs + experimentation infrastructure
+   - Billing stack maturity
+   - Unit clarity
+   - Lifecycle coverage
+4. If the model is usage-based or hybrid, also check:
+   - Credit carryover
+   - Decoy pricing
+   - One-time credit purchase
+   - Cancellation save offer
+   - Credit meter
+   - Credit usage email
+5. Output a compact Reality Check:
+   - Pricing model + confidence
+   - Diagnostic map
+   - 6-signal score table
+   - Top 3 findings with exact file:line, impact, and estimated effort
+   - Honest limits
+
+Keep it concise. Prefer concrete file evidence over broad advice.
+```
+
+When this prompt or `--quick` is used:
+- Run a bounded first pass instead of the full 60-180 second workflow.
+- Prioritize files that directly define pricing, billing, checkout, credits/usage, lifecycle, and pricing UI.
+- Inspect git history only enough to estimate Signal 2; do not exhaustively enumerate all pricing-related commits.
+- Output at most 3 priority findings and omit full appendices.
+- If key files are missing because pricing lives in another repo, state that once in Honest Limits and suggest the full command with `--related-repos`.
+- Do not use external search unless the user explicitly asks for it.
 
 ## Step 1: Automatic Project Structure Discovery + Type Classification
 
@@ -382,7 +426,13 @@ OFF by default. Only when explicitly opted in.
 
 ### Tone Principles
 
-90% self-diagnosis value + 10% mention of integrated solution options. Provide *code location + pseudo-code + estimated impact* so users can fix things themselves.
+90% self-diagnosis value + 10% mention of integrated solution options. Provide *exact code location + estimated impact + estimated effort* so users can fix things themselves (or feed the finding to an AI assistant). **Do not write fix code or pseudo-code** — a precise `file:line` plus a one-line description of the defect is enough; the user will apply the fix with their own tooling.
+
+### Anti-redundancy Rules
+
+- **Omit, don't placeholder.** When a section does not apply (e.g., usage-based deep checks for a tiered project, Signal 4/6 for marketing-only), **remove the section entirely**. Do not render a "SKIPPED" or "N/A — this doesn't apply because…" block. A single N/A cell in the 6-signal table is enough; one footnote in Honest Limits is enough.
+- **State scope limits once.** Scope/repo-boundary caveats (e.g., "billing lives in a separate repo") belong in the closing Honest Limits list. Do not repeat them in the Diagnostic Map, in per-signal rows, and in the limits list — pick the limits list.
+- **References block is minimal.** Do not list skill version or re-list the analysis commit (it's already in the header). Only include items the reader cannot derive from the rest of the report.
 
 ### Output Template
 
@@ -412,7 +462,9 @@ Analysis commit: <git short-hash>
 | 5. Unit Clarity | x/10 | ... | <file:line> |
 | 6. Lifecycle | x/6 | ... | <files> |
 
-## 🧪 Usage-Based Deep Checks (only if usage-based or hybrid)
+## 🧪 Usage-Based Deep Checks
+
+**Render this whole section only when pricing model is usage-based or hybrid. Otherwise OMIT — do not leave a "skipped / N/A" placeholder.**
 
 | Check | Result | Location |
 |---|---|---|
@@ -428,14 +480,10 @@ Analysis commit: <git short-hash>
 Top 3 sorted by impact × cost-to-fix.
 
 ### 1. <Finding title>
-- Location: `<file>:<line>`
-- Current state: <fact>
-- Impact: <support ticket/trust estimate>
-- How to fix directly:
-```ts
-// pseudo-code
-```
-- Estimated effort: <hours>
+- Location: `<file>:<line>` (multiple locations allowed if the defect spans files)
+- Current state: <one or two sentences of fact — what the code/page actually does today>
+- Impact: <support ticket/trust/revenue estimate, explicitly marked as inferred when it is>
+- Estimated effort: <hours or "trivial" / "half-day" / "1 day">
 
 ### 2. <same format>
 ### 3. <same format>
@@ -457,10 +505,12 @@ Partial solutions:
 - Statsig / GrowthBook — A/B testing (Signal 3)
 - Stripe Billing portal — partial lifecycle (Signal 6)
 
-## 🔗 References
-- skill version: pricing-diagnose v1.0
-- Analysis commit: <hash>
-- Analyzed files (full): <appendix>
+## 🔗 References (optional)
+- Analyzed files (full): <appendix — only if the reader will plausibly want the full list; otherwise omit this section entirely>
+
+## ⚠️ Honest Limits
+- <one bullet per real limitation: stale telemetry, separate-repo scope, inferred-impact estimates, etc.>
+- <do not repeat limits already implied by N/A cells in the table — only include ones the reader cannot derive on their own>
 ```
 
 ## Limitations (Honestly Stated)
@@ -482,6 +532,9 @@ $ cd ~/projects/our-ai-product
 $ /pricing-diagnose
 → Diagnostic map → pricing model detection → 6-signal analysis → Reality Check Report
   (+ Usage-Based Deep Checks if model is usage-based or hybrid)
+
+$ /pricing-diagnose --quick
+→ Bounded first pass → compact Reality Check → top 3 findings only
 
 $ /pricing-diagnose --signal 5
 → Deep dive into Signal 5 only
